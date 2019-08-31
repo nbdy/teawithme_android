@@ -25,4 +25,11 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_settings" />
     </group>
+
+    <group>
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/menu_share" />
+    </group>
 </menu>

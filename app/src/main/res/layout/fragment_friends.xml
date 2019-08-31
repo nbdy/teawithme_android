@@ -3,37 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/inviteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="64dp"
-        android:text="@string/invite" />
-
     <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/addButton"
         android:layout_marginStart="4dp"
-        android:ems="10"
+        android:layout_marginTop="64dp"
+        android:ems="14"
         android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/inviteButton"
-        android:layout_toStartOf="@id/inviteButton"
+        android:layout_alignBaseline="@id/usernameEditText"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
         android:text="@string/add" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/inviteButton"
+        android:layout_below="@id/usernameEditText"
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp">

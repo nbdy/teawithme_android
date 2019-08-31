@@ -37,42 +37,12 @@ public class FriendsFragment extends Fragment {
 
     }
 
-    @OnClick(R.id.inviteButton)
-    public void inviteButtonClicked() {
-        new API(getContext()).inviteUser(user, new onInviteSuccess(), new onInviteFailure(), new onInviteError());
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_friends, container, false);
         ButterKnife.bind(this, v);
         return v;
-    }
-
-    class onInviteSuccess extends API.on {
-        @Override
-        public void execute(String data) {
-            Intent i = new Intent();
-            i.setAction(Intent.ACTION_SEND);
-            i.putExtra(Intent.EXTRA_TEXT, "drink some tea with me: " + data);
-            i.setType("text/plain");
-            startActivity(Intent.createChooser(i, "invite someone"));
-        }
-    }
-
-    class onInviteFailure extends API.on {
-        @Override
-        public void execute() {
-            Toast.makeText(getContext(), "could not generate invitation url", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    class onInviteError extends API.on {
-        @Override
-        public void execute() {
-            Toast.makeText(getContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
-        }
     }
 
     class onAddSuccess extends API.on {

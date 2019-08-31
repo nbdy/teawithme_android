@@ -79,6 +79,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void invite() {
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_SEND);
+        i.putExtra(Intent.EXTRA_TEXT, "drink some tea with me: https://teawth.me/");
+        i.setType("text/plain");
+        startActivity(Intent.createChooser(i, "invite someone"));
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -96,6 +104,8 @@ public class MainActivity extends AppCompatActivity
             f = new FriendsFragment(user);
         } else if (id == R.id.nav_tools) {
             f = new SettingsFragment();
+        } else if (id == R.id.nav_share) {
+            invite();
         }
 
         if (f != null) fragmentManager.beginTransaction().replace(R.id.content, f).commit();

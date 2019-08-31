@@ -1,6 +1,7 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +67,13 @@ class API {
     }
 
     private static TeaService createService(Context context) {
-        Retrofit client = new Retrofit.Builder().baseUrl(API.baseURL).client(buildClient(context)).addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit client;
+        if (API.baseURL.startsWith("https://")) {
+            client = new Retrofit.Builder().baseUrl(API.baseURL).client(buildClient(context)).addConverterFactory(GsonConverterFactory.create()).build();
+        } else {
+            client = new Retrofit.Builder().baseUrl(API.baseURL).addConverterFactory(GsonConverterFactory.create()).build();
+        }
+
         return client.create(TeaService.class);
     }
 
@@ -85,7 +92,7 @@ class API {
             @Override
             public void onFailure(Call<SuccessResponse> call, Throwable t) {
                 t.printStackTrace();
-                onError.execute(); // todo own onSomething class
+                onError.execute();
             }
         });
     }
@@ -95,6 +102,7 @@ class API {
             @Override
             public void onResponse(Call<StringResponse> call, Response<StringResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.i("[API]", "String: " + response.body().value);
                     if (response.body().value != null) onSuccess.execute(response.body().value);
                     else onFailure.execute();
                 } else {
@@ -105,7 +113,7 @@ class API {
             @Override
             public void onFailure(Call<StringResponse> call, Throwable t) {
                 t.printStackTrace();
-                onError.execute(); // todo own onSomething class
+                onError.execute();
             }
         });
     }
@@ -116,10 +124,6 @@ class API {
 
     void loginUser(User data, onSomething onSuccess, onSomething onFailure, onSomething onError) {
         this.doEnqueuedCall_Success(service.loginUser(data), onSuccess, onFailure, onError);
-    }
-
-    void inviteUser(User data, onSomething onSuccess, onSomething onFailure, onSomething onError) {
-        this.doEnqueuedCall_String(service.inviteUser(data), onSuccess, onFailure, onError);
     }
 
     void addUser(User data, User other, onSomething onSuccess, onSomething onFailure, onSomething onError) {
@@ -133,8 +137,6 @@ class API {
         @POST("api/user/login")
         Call<SuccessResponse> loginUser(@Body User data);
 
-        @POST("api/user/invite")
-        Call<StringResponse> inviteUser(@Body User data);
 
         @POST("api/user/add")
         Call<SuccessResponse> addUser(@Body User data, User other);

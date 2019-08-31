@@ -3,15 +3,15 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">settings</string>
-    <string name="nav_header_desc">1</string>
-    <string name="nav_header_title">2</string>
-    <string name="nav_header_subtitle">3</string>
+    <string name="nav_header_desc">{description}</string>
+    <string name="nav_header_title">{username}</string>
 
     <string name="menu_profile">profile</string>
     <string name="menu_settings">settings</string>
     <string name="menu_history">history</string>
     <string name="menu_friends">friends</string>
     <string name="menu_home">home</string>
+    <string name="menu_share">share</string>
 
     <string name="add">add</string>
     <string name="invite">invite</string>
