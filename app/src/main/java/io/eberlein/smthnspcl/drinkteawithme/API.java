@@ -20,7 +20,7 @@ class API {
         return client.create(TeaService.class);
     }
 
-    private void doEnqueuedCall_Success(Call<SuccessResponse> call, onSomething onSuccess, onSomething onFailure) {
+    private void doEnqueuedCall_Success(Call<SuccessResponse> call, onSomething onSuccess, onSomething onFailure, onSomething onError) {
         call.enqueue(new Callback<SuccessResponse>() {
             @Override
             public void onResponse(Call<SuccessResponse> call, Response<SuccessResponse> response) {
@@ -34,12 +34,12 @@ class API {
 
             @Override
             public void onFailure(Call<SuccessResponse> call, Throwable t) {
-                onFailure.execute(); // todo own onSomething class
+                onError.execute(); // todo own onSomething class
             }
         });
     }
 
-    private void doEnqueuedCall_String(Call<StringResponse> call, onSomething onSuccess, onSomething onFailure) {
+    private void doEnqueuedCall_String(Call<StringResponse> call, onSomething onSuccess, onSomething onFailure, onSomething onError) {
         call.enqueue(new Callback<StringResponse>() {
             @Override
             public void onResponse(Call<StringResponse> call, Response<StringResponse> response) {
@@ -53,21 +53,21 @@ class API {
 
             @Override
             public void onFailure(Call<StringResponse> call, Throwable t) {
-                onFailure.execute(); // todo own onSomething class
+                onError.execute(); // todo own onSomething class
             }
         });
     }
 
-    void createUser(User data, onSomething onSuccess, onSomething onFailure) {
-        this.doEnqueuedCall_Success(service.createUser(data), onSuccess, onFailure);
+    void createUser(User data, onSomething onSuccess, onSomething onFailure, onSomething onError) {
+        this.doEnqueuedCall_Success(service.createUser(data), onSuccess, onFailure, onError);
     }
 
-    void loginUser(User data, onSomething onSuccess, onSomething onFailure) {
-        this.doEnqueuedCall_Success(service.loginUser(data), onSuccess, onFailure);
+    void loginUser(User data, onSomething onSuccess, onSomething onFailure, onSomething onError) {
+        this.doEnqueuedCall_Success(service.loginUser(data), onSuccess, onFailure, onError);
     }
 
-    void inviteUser(User data, onSomething onSuccess, onSomething onFailure) {
-        this.doEnqueuedCall_String(service.inviteUser(data), onSuccess, onFailure);
+    void inviteUser(User data, onSomething onSuccess, onSomething onFailure, onSomething onError) {
+        this.doEnqueuedCall_String(service.inviteUser(data), onSuccess, onFailure, onError);
     }
 
     public interface TeaService {

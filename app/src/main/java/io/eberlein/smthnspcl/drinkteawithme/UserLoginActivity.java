@@ -30,7 +30,7 @@ public class UserLoginActivity extends AppCompatActivity {
         if (u.isEmpty() || p.isEmpty()) {
             Toast.makeText(this, "username / password not filled", Toast.LENGTH_SHORT).show();
         } else {
-            new API().loginUser(new User(u, p), new onSuccess(), new onFailure());
+            new API().loginUser(new User(u, p), new onSuccess(), new onFailure(), new onError());
         }
     }
 
@@ -62,6 +62,13 @@ public class UserLoginActivity extends AppCompatActivity {
         public void execute() {
             Toast.makeText(getApplicationContext(), "username / password wrong", Toast.LENGTH_SHORT).show();
             password.setText("");
+        }
+    }
+
+    class onError extends API.on {
+        @Override
+        public void execute() {
+            Toast.makeText(getApplicationContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
         }
     }
 }

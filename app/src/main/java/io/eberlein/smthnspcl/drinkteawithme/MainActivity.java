@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             Log.i("[MAIN]", "loaded user: " + user.getUsername());
             Toast.makeText(this, "saved user data loaded", Toast.LENGTH_SHORT).show();
-            api.loginUser(user, new onLoginSuccess(), new onLoginFailure());
+            api.loginUser(user, new onLoginSuccess(), new onLoginFailure(), new onLoginError());
         }
     }
 
@@ -126,6 +126,13 @@ public class MainActivity extends AppCompatActivity
             Paper.book("user").delete("username");
             user = null;
             launchUserLoginActivity();
+        }
+    }
+
+    class onLoginError extends API.on {
+        @Override
+        public void execute() {
+            Toast.makeText(getApplicationContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
         }
     }
 }

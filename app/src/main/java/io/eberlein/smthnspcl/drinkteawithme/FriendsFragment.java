@@ -23,7 +23,7 @@ public class FriendsFragment extends Fragment {
 
     @OnClick(R.id.inviteButton)
     public void inviteButtonClicked() {
-        new API().inviteUser(user, new onSuccess(), new onFailure());
+        new API().inviteUser(user, new onSuccess(), new onFailure(), new onError());
     }
 
     @Nullable
@@ -49,6 +49,13 @@ public class FriendsFragment extends Fragment {
         @Override
         public void execute() {
             Toast.makeText(getContext(), "could not generate invitation url", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class onError extends API.on {
+        @Override
+        public void execute() {
+            Toast.makeText(getContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
         }
     }
 }

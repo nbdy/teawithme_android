@@ -32,7 +32,7 @@ public class UserCreationActivity extends AppCompatActivity {
         } else if (p.length() < 6) { // todo check if upper / lower etc
             Toast.makeText(this, "password should be more than 6 chars", Toast.LENGTH_SHORT).show();
         } else {
-            new API().createUser(new User(u, p), new onSuccess(), new onFailure());
+            new API().createUser(new User(u, p), new onSuccess(), new onFailure(), new onError());
         }
     }
 
@@ -60,6 +60,13 @@ public class UserCreationActivity extends AppCompatActivity {
         public void execute() {
             Toast.makeText(getApplicationContext(), "username taken", Toast.LENGTH_SHORT).show();
             username.setText("");
+        }
+    }
+
+    class onError extends API.on {
+        @Override
+        public void execute() {
+            Toast.makeText(getApplicationContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
         }
     }
 }
