@@ -10,13 +10,15 @@ import retrofit2.http.POST;
 
 class API {
     private TeaService service;
+    //private static String baseURL = "http://192.168.2.117:7344/";
+    private static String baseURL = "https://teawth.me/";
 
     API() {
         service = createService();
     }
 
     private static TeaService createService() {
-        Retrofit client = new Retrofit.Builder().baseUrl("https://drinkteawth.me/").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit client = new Retrofit.Builder().baseUrl(API.baseURL).addConverterFactory(GsonConverterFactory.create()).build();
         return client.create(TeaService.class);
     }
 

@@ -133,6 +133,8 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void execute() {
             Toast.makeText(getApplicationContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
+            user = null;
+            launchUserLoginActivity();
         }
     }
 }
