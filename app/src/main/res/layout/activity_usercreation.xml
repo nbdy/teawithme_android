@@ -46,6 +46,7 @@
         android:layout_alignBaseline="@id/passwordLabel"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@id/passwordLabel"
+        android:inputType="textPassword"
         android:ems="12" />
 
     <TextView
@@ -63,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/repeatLabel"
         android:layout_alignStart="@id/passwordEditText"
+        android:inputType="textPassword"
         android:ems="12" />
 
     <Button

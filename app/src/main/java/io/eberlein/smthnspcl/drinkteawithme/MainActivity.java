@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        api = new API();
+        api = new API(this);
     }
 
     @Override

@@ -1,5 +1,22 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
+import android.content.Context;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -13,12 +30,43 @@ class API {
     //private static String baseURL = "http://192.168.2.117:7344/";
     private static String baseURL = "https://teawth.me/";
 
-    API() {
-        service = createService();
+    API(Context context) {
+        service = createService(context);
     }
 
-    private static TeaService createService() {
-        Retrofit client = new Retrofit.Builder().baseUrl(API.baseURL).addConverterFactory(GsonConverterFactory.create()).build();
+    private static OkHttpClient buildClient(Context context) {
+        OkHttpClient client = null;
+
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            InputStream cert = context.getResources().openRawResource(R.raw.cert);
+
+            Certificate ca = cf.generateCertificate(cert);
+            cert.close();
+
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+            client = new OkHttpClient.Builder().sslSocketFactory(sslContext.getSocketFactory()).build();
+
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+
+        return client;
+    }
+
+    private static TeaService createService(Context context) {
+        Retrofit client = new Retrofit.Builder().baseUrl(API.baseURL).client(buildClient(context)).addConverterFactory(GsonConverterFactory.create()).build();
         return client.create(TeaService.class);
     }
 
@@ -36,6 +84,7 @@ class API {
 
             @Override
             public void onFailure(Call<SuccessResponse> call, Throwable t) {
+                t.printStackTrace();
                 onError.execute(); // todo own onSomething class
             }
         });
@@ -55,6 +104,7 @@ class API {
 
             @Override
             public void onFailure(Call<StringResponse> call, Throwable t) {
+                t.printStackTrace();
                 onError.execute(); // todo own onSomething class
             }
         });

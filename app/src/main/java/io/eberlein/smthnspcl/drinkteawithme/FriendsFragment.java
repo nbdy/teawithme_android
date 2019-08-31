@@ -23,7 +23,7 @@ public class FriendsFragment extends Fragment {
 
     @OnClick(R.id.inviteButton)
     public void inviteButtonClicked() {
-        new API().inviteUser(user, new onSuccess(), new onFailure(), new onError());
+        new API(getContext()).inviteUser(user, new onSuccess(), new onFailure(), new onError());
     }
 
     @Nullable

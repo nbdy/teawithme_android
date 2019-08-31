@@ -30,7 +30,7 @@ public class UserLoginActivity extends AppCompatActivity {
         if (u.isEmpty() || p.isEmpty()) {
             Toast.makeText(this, "username / password not filled", Toast.LENGTH_SHORT).show();
         } else {
-            new API().loginUser(new User(u, p), new onSuccess(), new onFailure(), new onError());
+            new API(getApplicationContext()).loginUser(new User(u, p), new onSuccess(), new onFailure(), new onError());
         }
     }
 
