@@ -24,6 +24,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.POST;
 
 class API {
@@ -127,7 +128,7 @@ class API {
     }
 
     void addUser(User data, User other, onSomething onSuccess, onSomething onFailure, onSomething onError) {
-        this.doEnqueuedCall_Success(service.addUser(data, other), onSuccess, onFailure, onError);
+        this.doEnqueuedCall_Success(service.addUser(new FriendRequest(data, other)), onSuccess, onFailure, onError);
     }
 
     public interface TeaService {
@@ -139,7 +140,17 @@ class API {
 
 
         @POST("api/user/add")
-        Call<SuccessResponse> addUser(@Body User data, User other);
+        Call<SuccessResponse> addUser(@Body FriendRequest data);
+    }
+
+    class FriendRequest {
+        User user;
+        User other;
+
+        FriendRequest(User user, User other) {
+            this.user = user;
+            this.other = other;
+        }
     }
 
     public interface onSomething {

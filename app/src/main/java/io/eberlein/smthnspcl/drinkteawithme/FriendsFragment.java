@@ -1,6 +1,5 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,19 +21,18 @@ public class FriendsFragment extends Fragment {
     @BindView(R.id.usernameEditText)
     EditText username;
 
-    public FriendsFragment(User user) {
+    FriendsFragment(User user) {
         this.user = user;
     }
 
     @OnClick(R.id.addButton)
-    public void addButtonClicked() {
+    void addButtonClicked() {
         String otherUser = username.getText().toString();
         if (otherUser.isEmpty()) {
             Toast.makeText(getContext(), "no username specified", Toast.LENGTH_SHORT).show();
         } else {
             new API(getContext()).addUser(user, new User(otherUser), new onAddSuccess(), new onAddFailure(), new onAddError());
         }
-
     }
 
     @Nullable
