@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">drinkteawithme</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">settings</string>
+    <string name="nav_header_desc">1</string>
+    <string name="nav_header_title">2</string>
+    <string name="nav_header_subtitle">3</string>
+
+    <string name="menu_profile">profile</string>
+    <string name="menu_settings">settings</string>
+    <string name="menu_history">history</string>
+    <string name="menu_friends">friends</string>
+    <string name="menu_home">home</string>
+
+    <string name="invite">invite</string>
+    <string name="repeat">repeat</string>
+    <string name="save">save</string>
+    <string name="login">login</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="forgot">forgot</string>
+    <string name="create">create</string>
+    <string name="dont_have_an_account">don\'t have an account?</string>
+    <string name="im_drinking_tea">i\'m drinking tea</string>
+</resources>
