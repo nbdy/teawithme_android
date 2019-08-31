@@ -122,6 +122,10 @@ class API {
         this.doEnqueuedCall_String(service.inviteUser(data), onSuccess, onFailure, onError);
     }
 
+    void addUser(User data, User other, onSomething onSuccess, onSomething onFailure, onSomething onError) {
+        this.doEnqueuedCall_Success(service.addUser(data, other), onSuccess, onFailure, onError);
+    }
+
     public interface TeaService {
         @POST("api/user/create")
         Call<SuccessResponse> createUser(@Body User data);
@@ -131,6 +135,9 @@ class API {
 
         @POST("api/user/invite")
         Call<StringResponse> inviteUser(@Body User data);
+
+        @POST("api/user/add")
+        Call<SuccessResponse> addUser(@Body User data, User other);
     }
 
     public interface onSomething {
