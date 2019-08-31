@@ -16,7 +16,7 @@ class API {
     }
 
     private static TeaService createService() {
-        Retrofit client = new Retrofit.Builder().baseUrl("http://192.168.2.117:7344/").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit client = new Retrofit.Builder().baseUrl("https://drinkteawth.me/").addConverterFactory(GsonConverterFactory.create()).build();
         return client.create(TeaService.class);
     }
 
