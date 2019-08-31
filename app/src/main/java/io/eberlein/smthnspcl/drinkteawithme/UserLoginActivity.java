@@ -2,7 +2,6 @@ package io.eberlein.smthnspcl.drinkteawithme;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,8 +15,6 @@ import io.paperdb.Paper;
 
 public class UserLoginActivity extends AppCompatActivity {
 
-    @BindView(R.id.saveCredentialsCheckbox)
-    CheckBox saveCredentials;
     @BindView(R.id.usernameEditText)
     EditText username;
     @BindView(R.id.passwordEditText)
@@ -51,9 +48,8 @@ public class UserLoginActivity extends AppCompatActivity {
         @Override
         public void execute() {
             Toast.makeText(getApplicationContext(), "logged in", Toast.LENGTH_SHORT).show();
-            if (saveCredentials.isChecked())
-                Paper.book("user").write("username", new User(username.getText().toString(), password.getText().toString()));
-            finish(); // todo fix staying in loginactivity
+            Paper.book("user").write("username", new User(username.getText().toString(), password.getText().toString()));
+            finish();
         }
     }
 
