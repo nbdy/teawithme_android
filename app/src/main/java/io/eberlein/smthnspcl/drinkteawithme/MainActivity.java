@@ -31,6 +31,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,12 +127,13 @@ public class MainActivity extends AppCompatActivity
                 if (c.equals("friend_accepted")) {
                     Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
                     CollectionReference ur = FirebaseFirestore.getInstance().collection(USERS);
-                    CollectionReference cr = ur.document(firebaseUserHash).collection(FRIENDS);
-                    DocumentReference u = cr.document(firebaseUserHash);
+                    DocumentReference u = ur.document(firebaseUserHash);
                     u.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-
+                            List<String> friends = documentSnapshot.get(FRIENDS, ArrayList.class);
+                            friends.add(uh);
+                            u.update(FRIENDS, friends);
                         }
                     });
                 }
