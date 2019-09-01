@@ -9,11 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleObserver;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.ChangeEventListener;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,16 +41,16 @@ public class FriendsFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         userReference = FirebaseFirestore.getInstance().collection(USERS).document(Static.hash(user.getEmail()));
         friendList.setLayoutManager(new LinearLayoutManager(getContext()));
-        FirestoreRecyclerOptions<Friend> o = new FirestoreRecyclerOptions.Builder<Friend>()
-                .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), Friend.class)
+        FirestoreRecyclerOptions<User> o = new FirestoreRecyclerOptions.Builder<User>()
+                .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), User.class)
                 .setLifecycleOwner(this).build();
-        FirestoreRecyclerAdapter adapter = new FirestoreRecyclerAdapter<Friend, FriendHolder>(o) {
+        FirestoreRecyclerAdapter adapter = new FirestoreRecyclerAdapter<User, FriendHolder>(o) {
 
             @Override
-            protected void onBindViewHolder(@NonNull FriendHolder friendHolder, int i, @NonNull Friend f) {
-                friendHolder.friendName.setText(f.displayName);
-                friendHolder.onlineStatus.setText(f.online ? "online" : "offline");
-                friendHolder.lastOnline.setText(f.lastOnline);
+            protected void onBindViewHolder(@NonNull FriendHolder friendHolder, int i, @NonNull User f) {
+                friendHolder.friendName.setText(f.getDisplayName());
+                friendHolder.onlineStatus.setText(f.getOnline() ? "online" : "offline");
+                friendHolder.lastOnline.setText(f.getLastOnline());
             }
 
             @NonNull
@@ -63,15 +61,6 @@ public class FriendsFragment extends Fragment {
         };
         friendList.setAdapter(adapter);
         return v;
-    }
-
-    class Friend {
-        Boolean online;
-        String displayName;
-        String lastOnline;
-        String created;
-        String sessionCount;
-        String lastSession;
     }
 
     class FriendHolder extends RecyclerView.ViewHolder {

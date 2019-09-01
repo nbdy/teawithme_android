@@ -102,16 +102,8 @@ public class MainActivity extends AppCompatActivity
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (!documentSnapshot.exists()) {
                     Log.i(TAG, documentSnapshot.getId() + " does not exist");
-                    HashMap<String, Object> u = new HashMap<>();
-                    u.put(DISPLAY_NAME, user.getDisplayName());
-                    u.put(ONLINE, true);
-                    u.put(LAST_ONLINE, Static.getCurrentTimestamp());
-                    u.put(CREATED, Static.getCurrentTimestamp());
-                    u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
-                    u.put(SESSION_COUNT, "0");
-                    ur.set(u);
+                    ur.set(new User(getApplicationContext(), user.getDisplayName()));
                     fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-                    //ur.collection(FRIENDS).
                 } else {
                     ur.update(LAST_ONLINE, Static.getCurrentTimestamp());
                     ur.update(ONLINE, true);
@@ -133,12 +125,13 @@ public class MainActivity extends AppCompatActivity
                 String c = data.getPathSegments().get(0);
                 if (c.equals("friend_accepted")) {
                     Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
-                    CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
-                    DocumentReference ur = cr.document(firebaseUserHash);
-                    ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    CollectionReference ur = FirebaseFirestore.getInstance().collection(USERS);
+                    CollectionReference cr = ur.document(firebaseUserHash).collection(FRIENDS);
+                    DocumentReference u = cr.document(firebaseUserHash);
+                    u.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            //documentSnapshot.get(FRIENDS, )
+
                         }
                     });
                 }
