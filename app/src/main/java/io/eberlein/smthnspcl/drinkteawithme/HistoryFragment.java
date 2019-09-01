@@ -12,10 +12,9 @@ import androidx.fragment.app.Fragment;
 import butterknife.ButterKnife;
 
 public class HistoryFragment extends Fragment {
-    private User user;
 
-    public HistoryFragment(User user) {
-        this.user = user;
+    public HistoryFragment() {
+
     }
 
     @Nullable

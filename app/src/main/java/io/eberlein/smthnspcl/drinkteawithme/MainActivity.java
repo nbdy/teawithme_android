@@ -16,7 +16,16 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.w3c.dom.Text;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,33 +34,18 @@ import io.paperdb.Paper;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int RC_SIGN_IN = 420;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
     @BindView(R.id.nav_view)
     NavigationView navigationView;
-    private User user;
-    private API api;
+
     private FragmentManager fragmentManager;
 
-    void launchUserLoginActivity() {
-        Intent i = new Intent(getApplicationContext(), UserLoginActivity.class);
-        startActivity(i);
-    }
-
-    void checkIfLoggedIn() {
-        user = Paper.book("user").read("username");
-        if (user == null) {
-            Log.i("[MAIN]", "no user data could be loaded");
-            Toast.makeText(this, "no user data saved", Toast.LENGTH_SHORT).show();
-            launchUserLoginActivity();
-        } else {
-            Log.i("[MAIN]", "loaded user: " + user.getUsername());
-            Toast.makeText(this, "saved user data loaded", Toast.LENGTH_SHORT).show();
-            api.loginUser(user, new onLoginSuccess(), new onLoginFailure(), new onLoginError());
-        }
-    }
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +60,12 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        api = new API(this);
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+    private void updateUI(FirebaseUser user) {
+        fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.headerUsernameLabel)).setText(user.getDisplayName());
     }
 
     @Override
@@ -97,11 +96,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             f = new HomeFragment();
         } else if (id == R.id.nav_profile) {
-            f = new ProfileFragment(user);
+            f = new ProfileFragment();
         } else if (id == R.id.nav_history) {
-            f = new HistoryFragment(user);
+            f = new HistoryFragment();
         } else if (id == R.id.nav_friends) {
-            f = new FriendsFragment(user);
+            f = new FriendsFragment();
         } else if (id == R.id.nav_tools) {
             f = new SettingsFragment();
         } else if (id == R.id.nav_share) {
@@ -117,34 +116,48 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        checkIfLoggedIn();
     }
 
-    class onLoginSuccess extends API.on {
-        @Override
-        public void execute() {
-            Toast.makeText(getApplicationContext(), "logged in successfully", Toast.LENGTH_SHORT).show();
-            ((TextView) findViewById(R.id.headerUsernameLabel)).setText(user.getUsername());
-            fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) updateUI(auth.getCurrentUser());
+        else {
+            startActivityForResult(
+                    // Get an instance of AuthUI based on the default app
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(Arrays.asList(
+                                    new AuthUI.IdpConfig.EmailBuilder().build()
+                            ))
+                            .setTosAndPrivacyPolicyUrls(
+                                    "https://teawth.me/tos",
+                                    "https://teawth.me/privacy"
+                            )
+                            .setIsSmartLockEnabled(!BuildConfig.DEBUG, true)
+                            .build(),
+                    RC_SIGN_IN);
         }
     }
 
-    class onLoginFailure extends API.on {
-        @Override
-        public void execute() {
-            Toast.makeText(getApplicationContext(), "could not login with saved user data", Toast.LENGTH_SHORT).show();
-            Paper.book("user").delete("username");
-            user = null;
-            launchUserLoginActivity();
-        }
-    }
-
-    class onLoginError extends API.on {
-        @Override
-        public void execute() {
-            Toast.makeText(getApplicationContext(), "there was an error connecting to the server", Toast.LENGTH_SHORT).show();
-            user = null;
-            launchUserLoginActivity();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            if (resultCode == RESULT_OK) updateUI(FirebaseAuth.getInstance().getCurrentUser());
+            else {
+                if (response == null) {
+                    Toast.makeText(getApplicationContext(), "sign in cancelled", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(getApplicationContext(), "no internet connection", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getApplicationContext(), "known unknowns", Toast.LENGTH_SHORT).show();
+                Log.e("[BOII]", "Sign-in error: ", response.getError());
+            }
         }
     }
 }

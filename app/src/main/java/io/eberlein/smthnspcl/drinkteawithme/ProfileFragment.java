@@ -12,10 +12,9 @@ import androidx.fragment.app.Fragment;
 import butterknife.ButterKnife;
 
 public class ProfileFragment extends Fragment {
-    private User user;
 
-    public ProfileFragment(User user) {
-        this.user = user;
+    public ProfileFragment() {
+
     }
 
     @Nullable
