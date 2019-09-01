@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                     u.put(LAST_ONLINE, Static.getCurrentTimestamp());
                     u.put(CREATED, Static.getCurrentTimestamp());
                     u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
-                    u.put(SESSION_COUNT, 0);
+                    u.put(SESSION_COUNT, "0");
                     ur.set(u).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
