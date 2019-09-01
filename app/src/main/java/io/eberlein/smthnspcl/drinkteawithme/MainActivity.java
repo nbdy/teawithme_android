@@ -109,12 +109,8 @@ public class MainActivity extends AppCompatActivity
                     u.put(CREATED, Static.getCurrentTimestamp());
                     u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
                     u.put(SESSION_COUNT, "0");
-                    ur.set(u).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-                        }
-                    });
+                    ur.set(u);
+                    fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
                     //ur.collection(FRIENDS).
                 } else {
                     ur.update(LAST_ONLINE, Static.getCurrentTimestamp());
@@ -131,17 +127,21 @@ public class MainActivity extends AppCompatActivity
         Uri data = getIntent().getData();
         if (data != null) {
             String uh = data.getHost();
-            String c = data.getPathSegments().get(0);
-            if (c.equals("friend_accepted")) {
-                Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
-                CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
-                DocumentReference ur = cr.document(firebaseUserHash);
-                ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        //documentSnapshot.get(FRIENDS, )
-                    }
-                });
+            if (uh.equals(firebaseUserHash)) {
+                Toast.makeText(this, "i hope you are already your friend", Toast.LENGTH_LONG).show();
+            } else {
+                String c = data.getPathSegments().get(0);
+                if (c.equals("friend_accepted")) {
+                    Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
+                    CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
+                    DocumentReference ur = cr.document(firebaseUserHash);
+                    ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            //documentSnapshot.get(FRIENDS, )
+                        }
+                    });
+                }
             }
         }
     }
