@@ -4,13 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleObserver;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.ChangeEventListener;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +46,22 @@ public class FriendsFragment extends Fragment {
         FirestoreRecyclerOptions<Friend> o = new FirestoreRecyclerOptions.Builder<Friend>()
                 .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), Friend.class)
                 .setLifecycleOwner(this).build();
+        FirestoreRecyclerAdapter adapter = new FirestoreRecyclerAdapter<Friend, FriendHolder>(o) {
 
+            @Override
+            protected void onBindViewHolder(@NonNull FriendHolder friendHolder, int i, @NonNull Friend f) {
+                friendHolder.friendName.setText(f.displayName);
+                friendHolder.onlineStatus.setText(f.online ? "online" : "offline");
+                friendHolder.lastOnline.setText(f.lastOnline);
+            }
+
+            @NonNull
+            @Override
+            public FriendHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new FriendHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_friend, parent, false));
+            }
+        };
+        friendList.setAdapter(adapter);
         return v;
     }
 
@@ -53,5 +72,19 @@ public class FriendsFragment extends Fragment {
         String created;
         String sessionCount;
         String lastSession;
+    }
+
+    class FriendHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.friendName)
+        TextView friendName;
+        @BindView(R.id.onlineStatus)
+        TextView onlineStatus;
+        @BindView(R.id.lastOnline)
+        TextView lastOnline;
+
+        FriendHolder(View v) {
+            super(v);
+            ButterKnife.bind(this, v);
+        }
     }
 }

@@ -26,4 +26,5 @@
     <string name="sessions">sessions</string>
     <string name="session">session</string>
     <string name="never_documented">never documented</string>
+    <string name="last_online">zuletzt online</string>
 </resources>
