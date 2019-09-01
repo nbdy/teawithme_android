@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     User ru = new User(documentSnapshot);
                                     Toast.makeText(getApplicationContext(), "added " + ru.getDisplayName() + "to your friends ", Toast.LENGTH_LONG).show();
-                                    cu.addFriend(ru);
+                                    cu.addFriend(uh);
                                     u.set(cu);
                                 }
                             });

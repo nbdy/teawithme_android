@@ -5,7 +5,6 @@ import android.content.Context;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
@@ -22,7 +21,7 @@ public class User {
     private String created;
     private String sessionCount;
     private String lastSession;
-    private List<User> friends;
+    private List<String> friends;
 
     User() {
 
@@ -34,7 +33,7 @@ public class User {
         lastOnline = snapshot.get(LAST_ONLINE, String.class);
         created = snapshot.get(CREATED, String.class);
         sessionCount = snapshot.get(SESSION_COUNT, String.class);
-        friends = (ArrayList<User>) snapshot.get(FRIENDS);
+        friends = (ArrayList<String>) snapshot.get(FRIENDS);
     }
 
     User(Context ctx, String displayName) {
@@ -47,7 +46,7 @@ public class User {
         friends = new ArrayList<>();
     }
 
-    User(String displayName, String lastOnline, String created, String sessionCount, String lastSession, Boolean online, List<User> friends) {
+    User(String displayName, String lastOnline, String created, String sessionCount, String lastSession, Boolean online, List<String> friends) {
         this.displayName = displayName;
         this.lastOnline = lastOnline;
         this.created = created;
@@ -57,15 +56,15 @@ public class User {
         this.friends = friends;
     }
 
-    public List<User> getFriends() {
+    public List<String> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(List<String> friends) {
         this.friends = friends;
     }
 
-    public void addFriend(User friend) {
+    public void addFriend(String friend) {
         if (!friends.contains(friend)) friends.add(friend);
     }
 
