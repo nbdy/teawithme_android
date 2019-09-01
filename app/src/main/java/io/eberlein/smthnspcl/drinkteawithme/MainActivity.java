@@ -99,13 +99,22 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (!documentSnapshot.exists()) {
+                    Log.i(TAG, documentSnapshot.getId() + " does not exist");
                     HashMap<String, Object> u = new HashMap<>();
                     u.put(DISPLAY_NAME, user.getDisplayName());
                     u.put(ONLINE, true);
-                    u.put(LAST_SESSION, R.string.never_documented);
+                    u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
                     u.put(SESSION_COUNT, "0");
-                    ur.set(u);
+                    ur.set(u).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+                        }
+                    });
                     //ur.collection(FRIENDS).
+                } else {
+                    Log.i(TAG, documentSnapshot.getId() + " does exist");
+                    fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
                 }
             }
         });
@@ -133,7 +142,6 @@ public class MainActivity extends AppCompatActivity
 
     private void updateUI(FirebaseUser user) {
         precheck(user);
-        fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.headerUsernameLabel)).setText(user.getDisplayName());
     }
 
