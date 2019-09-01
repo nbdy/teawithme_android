@@ -21,22 +21,34 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.paperdb.Paper;
+
+import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int RC_SIGN_IN = 420;
+    private static final String TAG = "{ MAIN }";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -64,7 +76,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Paper.init(this);
         fragmentManager = getSupportFragmentManager();
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -75,7 +86,25 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
     }
 
+    private void precheck(FirebaseUser user) {
+        CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
+        DocumentReference ur = cr.document(Static.hash(user.getEmail()));
+        ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.i(TAG, documentSnapshot.getId());
+                if (!documentSnapshot.exists()) {
+                    HashMap<String, Object> u = new HashMap<>();
+                    u.put(LAST_SESSION, R.string.never_documented);
+                    u.put(SESSION_COUNT, "0");
+                    ur.set(u);
+                }
+            }
+        });
+    }
+
     private void updateUI(FirebaseUser user) {
+        precheck(user);
         fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.headerUsernameLabel)).setText(user.getDisplayName());
     }

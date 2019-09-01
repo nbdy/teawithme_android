@@ -2,7 +2,6 @@
     <string name="app_name">drinkteawithme</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">settings</string>
     <string name="nav_header_desc">{description}</string>
     <string name="nav_header_title">{username}</string>
 
@@ -17,19 +16,13 @@
     <string name="fcm_msg">fcmmsg</string>
     <string name="fcm_channel_id">teawthme</string>
 
-    <string name="add">add</string>
-    <string name="invite">invite</string>
-    <string name="repeat">repeat</string>
-    <string name="save">save</string>
-    <string name="login">login</string>
-    <string name="username">username</string>
-    <string name="password">password</string>
-    <string name="forgot">forgot</string>
-    <string name="create">create</string>
     <string name="dont_have_an_account">don\'t have an account?</string>
     <string name="im_drinking_tea">i\'m drinking tea</string>
 
+    <string name="add">add</string>
     <string name="last_session">last session was</string>
     <string name="you_had">you had </string>
+    <string name="at"></string>
     <string name="sessions">sessions</string>
+    <string name="never_documented">never documented</string>
 </resources>
