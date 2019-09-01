@@ -1,6 +1,7 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +28,13 @@ import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class FriendsFragment extends Fragment {
+    private final static String TAG = "{ FRIENDS }";
 
     @BindView(R.id.friendList)
     RecyclerView friendList;
     private DocumentReference userReference;
     private FirebaseUser user;
+    private FirestoreRecyclerAdapter<User, UserHolder> adapter;
 
     @Nullable
     @Override
@@ -42,12 +45,10 @@ public class FriendsFragment extends Fragment {
         userReference = FirebaseFirestore.getInstance().collection(USERS).document(Static.hash(user.getEmail()));
         friendList.setLayoutManager(new LinearLayoutManager(getContext()));
         FirestoreRecyclerOptions<User> o = new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), User.class)
-                .setLifecycleOwner(this).build();
-        FirestoreRecyclerAdapter adapter = new FirestoreRecyclerAdapter<User, FriendHolder>(o) {
-
+                .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), User.class).build();
+        adapter = new FirestoreRecyclerAdapter<User, UserHolder>(o) {
             @Override
-            protected void onBindViewHolder(@NonNull FriendHolder friendHolder, int i, @NonNull User f) {
+            protected void onBindViewHolder(@NonNull UserHolder friendHolder, int i, @NonNull User f) {
                 friendHolder.friendName.setText(f.getDisplayName());
                 friendHolder.onlineStatus.setText(f.getOnline() ? "online" : "offline");
                 friendHolder.lastOnline.setText(f.getLastOnline());
@@ -55,15 +56,29 @@ public class FriendsFragment extends Fragment {
 
             @NonNull
             @Override
-            public FriendHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new FriendHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_friend, parent, false));
+            public UserHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new UserHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_friend, parent, false));
             }
         };
         friendList.setAdapter(adapter);
         return v;
     }
 
-    class FriendHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+        Log.i(TAG, "started listening");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+        Log.i(TAG, "stopped listening");
+    }
+
+    class UserHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.friendName)
         TextView friendName;
         @BindView(R.id.onlineStatus)
@@ -71,7 +86,7 @@ public class FriendsFragment extends Fragment {
         @BindView(R.id.lastOnline)
         TextView lastOnline;
 
-        FriendHolder(View v) {
+        UserHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
         }

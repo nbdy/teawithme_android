@@ -125,15 +125,21 @@ public class MainActivity extends AppCompatActivity
             } else {
                 String c = data.getPathSegments().get(0);
                 if (c.equals("friend_accepted")) {
-                    Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
                     CollectionReference ur = FirebaseFirestore.getInstance().collection(USERS);
                     DocumentReference u = ur.document(firebaseUserHash);
                     u.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            List<String> friends = documentSnapshot.get(FRIENDS, ArrayList.class);
-                            friends.add(uh);
-                            u.update(FRIENDS, friends);
+                            User cu = new User(documentSnapshot);
+                            ur.document(uh).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    User ru = new User(documentSnapshot);
+                                    Toast.makeText(getApplicationContext(), "added " + ru.getDisplayName() + "to your friends ", Toast.LENGTH_LONG).show();
+                                    cu.addFriend(ru);
+                                    u.set(cu);
+                                }
+                            });
                         }
                     });
                 }
