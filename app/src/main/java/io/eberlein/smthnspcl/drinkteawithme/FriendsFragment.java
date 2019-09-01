@@ -1,7 +1,6 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +12,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,9 +35,10 @@ public class FriendsFragment extends Fragment {
 
     @BindView(R.id.friendList)
     RecyclerView friendList;
+
+    private CollectionReference usersReference;
     private DocumentReference userReference;
     private FirebaseUser user;
-    private FirestoreRecyclerAdapter<User, UserHolder> adapter;
 
     @Nullable
     @Override
@@ -42,40 +46,63 @@ public class FriendsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_friends, container, false);
         ButterKnife.bind(this, v);
         user = FirebaseAuth.getInstance().getCurrentUser();
-        userReference = FirebaseFirestore.getInstance().collection(USERS).document(Static.hash(user.getEmail()));
+        usersReference = FirebaseFirestore.getInstance().collection(USERS);
+        userReference = usersReference.document(Static.hash(user.getEmail()));
         friendList.setLayoutManager(new LinearLayoutManager(getContext()));
-        FirestoreRecyclerOptions<User> o = new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(userReference.collection(FRIENDS).orderBy(ONLINE), User.class).build();
-        adapter = new FirestoreRecyclerAdapter<User, UserHolder>(o) {
-            @Override
-            protected void onBindViewHolder(@NonNull UserHolder friendHolder, int i, @NonNull User f) {
-                friendHolder.friendName.setText(f.getDisplayName());
-                friendHolder.onlineStatus.setText(f.getOnline() ? "online" : "offline");
-                friendHolder.lastOnline.setText(f.getLastOnline());
-            }
+        UserAdapter adapter = new UserAdapter();
 
-            @NonNull
-            @Override
-            public UserHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new UserHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_friend, parent, false));
-            }
-        };
         friendList.setAdapter(adapter);
+
+        userReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+                User cu = new User(snapshot);
+                for (String fh : cu.getFriends()) {
+                    usersReference.document(fh).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot snapshot) {
+                            adapter.addUser(new User(snapshot));
+                        }
+                    });
+                }
+            }
+        });
+
         return v;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-        Log.i(TAG, "started listening");
-    }
+    class UserAdapter extends RecyclerView.Adapter<UserHolder> {
+        List<User> users;
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-        Log.i(TAG, "stopped listening");
+        UserAdapter() {
+            users = new ArrayList<>();
+        }
+
+        @NonNull
+        @Override
+        public UserHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new UserHolder(LayoutInflater.from(getContext()).inflate(R.layout.viewholder_friend, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull UserHolder holder, int position) {
+            User u = users.get(position);
+            holder.friendName.setText(u.getDisplayName());
+            holder.lastOnline.setText(u.getLastOnline());
+            holder.onlineStatus.setText(u.getOnline() ? "online" : "offline");
+        }
+
+        @Override
+        public int getItemCount() {
+            return users.size();
+        }
+
+        public void addUser(User u) {
+            if (!users.contains(u)) {
+                users.add(u);
+                notifyItemChanged(users.indexOf(u));
+            }
+        }
     }
 
     class UserHolder extends RecyclerView.ViewHolder {
