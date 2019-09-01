@@ -2,7 +2,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    style="@style/AppTheme"
     android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/lastTeaSessionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        android:text="@string/last_session" />
+
+    <TextView
+        android:id="@+id/lastTeaSession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/lastTeaSessionLabel"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/lastTeaSessionLabel" />
+
+    <TextView
+        android:id="@+id/sessionCountPrefixLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lastTeaSessionLabel"
+        android:layout_alignStart="@id/lastTeaSessionLabel"
+        android:text="@string/you_had" />
+
+    <TextView
+        android:id="@+id/sessionCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/sessionCountPrefixLabel"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/sessionCountPrefixLabel" />
+
+    <TextView
+        android:id="@+id/sessionCountSuffixLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/sessionCountPrefixLabel"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/sessionCount"
+        android:text="@string/sessions" />
 
     <ImageView
         android:id="@+id/teaImageView"
