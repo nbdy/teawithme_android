@@ -6,11 +6,11 @@
 
     <ImageView
         android:id="@+id/teaImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
         android:contentDescription="@string/im_drinking_tea"
-        app:srcCompat="@drawable/baseline_local_cafe_black_48" />
+        app:srcCompat="@drawable/baseline_local_cafe_white_48" />
 </RelativeLayout>
