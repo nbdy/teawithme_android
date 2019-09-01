@@ -41,8 +41,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
@@ -103,6 +105,8 @@ public class MainActivity extends AppCompatActivity
                     HashMap<String, Object> u = new HashMap<>();
                     u.put(DISPLAY_NAME, user.getDisplayName());
                     u.put(ONLINE, true);
+                    u.put(LAST_ONLINE, Static.getCurrentTimestamp());
+                    u.put(CREATED, Static.getCurrentTimestamp());
                     u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
                     u.put(SESSION_COUNT, 0);
                     ur.set(u).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -113,6 +117,8 @@ public class MainActivity extends AppCompatActivity
                     });
                     //ur.collection(FRIENDS).
                 } else {
+                    ur.update(LAST_ONLINE, Static.getCurrentTimestamp());
+                    ur.update(ONLINE, true);
                     Log.i(TAG, documentSnapshot.getId() + " does exist");
                     fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
                 }
@@ -191,8 +197,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).update(ONLINE, false);
+        super.onDestroy();
     }
 
     @Override

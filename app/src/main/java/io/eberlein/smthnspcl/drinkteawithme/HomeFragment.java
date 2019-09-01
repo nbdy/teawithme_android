@@ -1,8 +1,6 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,13 +17,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static io.eberlein.smthnspcl.drinkteawithme.Static.DATETIMEFORMAT;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
 
@@ -46,7 +40,7 @@ public class HomeFragment extends Fragment {
     @OnClick(R.id.teaImageView)
     void teaImageViewTapped() {
         Toast.makeText(getContext(), "you are drinking tea now", Toast.LENGTH_SHORT).show();
-        sessionDocument.update(LAST_SESSION, DateFormat.format(DATETIMEFORMAT, Calendar.getInstance().getTime()));
+        sessionDocument.update(LAST_SESSION, Static.getCurrentTimestamp());
         sessionDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
