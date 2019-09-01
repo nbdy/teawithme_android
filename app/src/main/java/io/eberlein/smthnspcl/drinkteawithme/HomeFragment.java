@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
         sessionDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                sessionDocument.update(SESSION_COUNT, String.valueOf(Integer.valueOf(documentSnapshot.get(SESSION_COUNT, String.class)) + 1));
+                sessionDocument.update(SESSION_COUNT, String.valueOf(Long.valueOf(documentSnapshot.get(SESSION_COUNT, String.class)) + 1));
             }
         });
         updateUI();

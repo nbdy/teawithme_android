@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
                     u.put(DISPLAY_NAME, user.getDisplayName());
                     u.put(ONLINE, true);
                     u.put(LAST_SESSION, getResources().getString(R.string.never_documented));
-                    u.put(SESSION_COUNT, "0");
+                    u.put(SESSION_COUNT, 0);
                     ur.set(u).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
