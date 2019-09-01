@@ -1,5 +1,6 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +37,8 @@ public class HomeFragment extends Fragment {
     TextView lastTeaSession;
     @BindView(R.id.sessionCount)
     TextView sessionCount;
+    @BindView(R.id.sessionCountSuffixLabel)
+    TextView sessionCountSuffix;
 
     private DocumentReference sessionDocument;
     private FirebaseUser user;
@@ -65,7 +69,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 lastTeaSession.setText(documentSnapshot.get(LAST_SESSION, String.class));
-                sessionCount.setText(documentSnapshot.get(SESSION_COUNT, String.class));
+                String sc = documentSnapshot.get(SESSION_COUNT, String.class);
+                if (sc.equals("1")) sessionCountSuffix.setText(R.string.session);
+                else sessionCountSuffix.setText(R.string.sessions);
+                sessionCount.setText(sc);
             }
         });
     }

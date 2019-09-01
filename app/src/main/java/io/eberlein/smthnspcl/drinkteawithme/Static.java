@@ -7,6 +7,9 @@ import java.security.NoSuchAlgorithmException;
 
 class Static {
     static final String USERS = "users";
+    static final String DISPLAY_NAME = "displayName";
+    static final String ONLINE = "online";
+    static final String FRIENDS = "friends";
     static final String SESSION_COUNT = "sessionCount";
     static final String LAST_SESSION = "lastSession";
     static final String DATETIMEFORMAT = "EEE, d MMM yyyy HH:mm";

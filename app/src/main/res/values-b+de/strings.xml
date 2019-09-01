@@ -25,5 +25,6 @@
     <string name="at">am</string>
     <string name="you_had">du hattest</string>
     <string name="sessions">sitzungen</string>
+    <string name="session">sitzung</string>
     <string name="never_documented">niemals</string>
 </resources>

@@ -24,5 +24,6 @@
     <string name="you_had">you had </string>
     <string name="at"></string>
     <string name="sessions">sessions</string>
+    <string name="session">session</string>
     <string name="never_documented">never documented</string>
 </resources>

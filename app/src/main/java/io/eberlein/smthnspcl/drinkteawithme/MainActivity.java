@@ -1,6 +1,7 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,6 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -32,15 +32,19 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
@@ -70,6 +74,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
 
     private FirebaseAuth mAuth;
+    private String firebaseUserHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,20 +92,43 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void precheck(FirebaseUser user) {
+        firebaseUserHash = Static.hash(user.getEmail());
         CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
-        DocumentReference ur = cr.document(Static.hash(user.getEmail()));
+        DocumentReference ur = cr.document(firebaseUserHash);
         ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                Log.i(TAG, documentSnapshot.getId());
                 if (!documentSnapshot.exists()) {
                     HashMap<String, Object> u = new HashMap<>();
+                    u.put(DISPLAY_NAME, user.getDisplayName());
+                    u.put(ONLINE, true);
                     u.put(LAST_SESSION, R.string.never_documented);
                     u.put(SESSION_COUNT, "0");
                     ur.set(u);
+                    //ur.collection(FRIENDS).
                 }
             }
         });
+        getIntentData();
+    }
+
+    private void getIntentData() {
+        Uri data = getIntent().getData();
+        if (data != null) {
+            String uh = data.getHost();
+            String c = data.getPathSegments().get(0);
+            if (c.equals("friend_accepted")) {
+                Toast.makeText(this, "this would add some user to your friendslist", Toast.LENGTH_LONG).show();
+                CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
+                DocumentReference ur = cr.document(firebaseUserHash);
+                ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        //documentSnapshot.get(FRIENDS, )
+                    }
+                });
+            }
+        }
     }
 
     private void updateUI(FirebaseUser user) {
@@ -122,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     private void invite() {
         Intent i = new Intent();
         i.setAction(Intent.ACTION_SEND);
-        i.putExtra(Intent.EXTRA_TEXT, "drink some tea with me: https://teawth.me/");
+        i.putExtra(Intent.EXTRA_TEXT, "drink some tea with me: https://teawth.me/invite/" + firebaseUserHash);
         i.setType("text/plain");
         startActivity(Intent.createChooser(i, "invite someone"));
     }
