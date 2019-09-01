@@ -127,19 +127,22 @@ public class MainActivity extends AppCompatActivity
                 if (c.equals("friend_accepted")) {
                     CollectionReference ur = FirebaseFirestore.getInstance().collection(USERS);
                     DocumentReference u = ur.document(firebaseUserHash);
+                    DocumentReference o = ur.document(uh);
                     u.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             User cu = new User(documentSnapshot);
-                            ur.document(uh).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            o.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                 @Override
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     User ru = new User(documentSnapshot);
                                     Toast.makeText(getApplicationContext(), "added " + ru.getDisplayName() + "to your friends ", Toast.LENGTH_LONG).show();
-                                    cu.addFriend(uh);
-                                    u.set(cu);
+                                    ru.addFriend(firebaseUserHash);
+                                    o.set(ru);
                                 }
                             });
+                            cu.addFriend(uh);
+                            u.set(cu);
                         }
                     });
                 }

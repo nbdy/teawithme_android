@@ -26,12 +26,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class FriendsFragment extends Fragment {
-    private final static String TAG = "{ FRIENDS }";
 
     @BindView(R.id.friendList)
     RecyclerView friendList;
