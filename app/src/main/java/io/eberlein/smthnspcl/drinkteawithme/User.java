@@ -1,10 +1,9 @@
 package io.eberlein.smthnspcl.drinkteawithme;
-
-import android.content.Context;
-
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
@@ -12,78 +11,110 @@ import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.OFFLINE_TIMELINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE_TIMELINE;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSIONS;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.USERNAME_TIMELINE;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
-public class User {
+public class User extends FireBaseObject {
+    private String id;
+    private String email;
     private Boolean online;
     private String displayName;
     private String lastOnline;
     private String created;
-    private String sessionCount;
     private String lastSession;
-    private List<String> friends;
+    private HashMap<String, String> friends;
+    private List<String> sessions;
+    private List<String> onlineTimeline;
+    private List<String> offlineTimeline;
+    private HashMap<String, String> usernameTimeline;
 
-    User() {
-
-    }
 
     User(DocumentSnapshot snapshot) {
+        id = snapshot.getId();
         online = snapshot.get(ONLINE, Boolean.class);
         displayName = snapshot.get(DISPLAY_NAME, String.class);
         lastOnline = snapshot.get(LAST_ONLINE, String.class);
         created = snapshot.get(CREATED, String.class);
-        sessionCount = snapshot.get(SESSION_COUNT, String.class);
         lastSession = snapshot.get(LAST_SESSION, String.class);
-        friends = (ArrayList<String>) snapshot.get(FRIENDS);
+        friends = (HashMap<String, String>) snapshot.get(FRIENDS);
+        if (friends == null) friends = new HashMap<>();
+        sessions = (List<String>) snapshot.get(SESSIONS);
+        if (sessions == null) sessions = new ArrayList<>();
+        onlineTimeline = (List<String>) snapshot.get(ONLINE_TIMELINE);
+        if (onlineTimeline == null) onlineTimeline = new ArrayList<>();
+        offlineTimeline = (List<String>) snapshot.get(OFFLINE_TIMELINE);
+        if (offlineTimeline == null) offlineTimeline = new ArrayList<>();
+        usernameTimeline = (HashMap<String, String>) snapshot.get(USERNAME_TIMELINE);
+        if (usernameTimeline == null) usernameTimeline = new HashMap<>();
     }
 
-    User(Context ctx, String displayName) {
+    User(String displayName, String email, String lastSession) {
+        this.id = Static.hash(email);
+        this.email = email;
         this.displayName = displayName;
         online = true;
         lastOnline = Static.getCurrentTimestamp();
         created = lastOnline;
-        sessionCount = "0";
-        lastSession = ctx.getResources().getString(R.string.never_documented);
-        friends = new ArrayList<>();
-    }
-
-    User(String displayName, String lastOnline, String created, String sessionCount, String lastSession, Boolean online, List<String> friends) {
-        this.displayName = displayName;
-        this.lastOnline = lastOnline;
-        this.created = created;
-        this.sessionCount = sessionCount;
         this.lastSession = lastSession;
-        this.online = online;
-        this.friends = friends;
+        friends = new HashMap<>();
+        sessions = new ArrayList<>();
+        onlineTimeline = new ArrayList<>();
+        offlineTimeline = new ArrayList<>();
+        usernameTimeline = new HashMap<>();
+        update();
     }
 
-    public List<String> getFriends() {
+    @Override
+    public void update() {
+        FirebaseFirestore.getInstance().collection(USERS).document(id).set(this);
+    }
+
+    public List<String> getSessions() {
+        return sessions;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public HashMap<String, String> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<String> friends) {
-        this.friends = friends;
+    public void addFriend(String friend) {
+        if (!friends.containsKey(friend)) {
+            friends.put(friend, Static.getCurrentTimestamp());
+            update();
+        }
     }
 
-    public void addFriend(String friend) {
-        if (!friends.contains(friend)) friends.add(friend);
+    public void removeFriend(String friend) {
+        if (friends.containsKey(friend)) {
+            friends.remove(friend);
+            update();
+        }
     }
 
     public Boolean getOnline() {
         return online;
     }
 
-    public void setOnline(Boolean online) {
-        this.online = online;
+    public void setOnline() {
+        online = true;
+        onlineTimeline.add(Static.getCurrentTimestamp());
+        update();
     }
 
     public String getCreated() {
         return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
     }
 
     public String getDisplayName() {
@@ -92,6 +123,7 @@ public class User {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+        update();
     }
 
     public String getLastOnline() {
@@ -100,6 +132,7 @@ public class User {
 
     public void setLastOnline(String lastOnline) {
         this.lastOnline = lastOnline;
+        update();
     }
 
     public String getLastSession() {
@@ -108,13 +141,21 @@ public class User {
 
     public void setLastSession(String lastSession) {
         this.lastSession = lastSession;
+        this.sessions.add(lastSession);
+        update();
     }
 
-    public String getSessionCount() {
-        return sessionCount;
+    public List<String> getOnlineTimeline() {
+        return onlineTimeline;
     }
 
-    public void setSessionCount(String sessionCount) {
-        this.sessionCount = sessionCount;
+    public Integer getSessionCount() {
+        return sessions.size();
+    }
+
+    public void setOffline() {
+        online = false;
+        offlineTimeline.add(Static.getCurrentTimestamp());
+        update();
     }
 }

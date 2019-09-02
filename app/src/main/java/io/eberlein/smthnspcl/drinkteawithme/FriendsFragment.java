@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -33,29 +32,27 @@ public class FriendsFragment extends Fragment {
     @BindView(R.id.friendList)
     RecyclerView friendList;
 
-    private CollectionReference usersReference;
-    private DocumentReference userReference;
-    private FirebaseUser user;
+    private String userHash;
+
+    FriendsFragment(String userHash) {
+        this.userHash = userHash;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_friends, container, false);
         ButterKnife.bind(this, v);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        usersReference = FirebaseFirestore.getInstance().collection(USERS);
-        userReference = usersReference.document(Static.hash(user.getEmail()));
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        CollectionReference usersReference = FirebaseFirestore.getInstance().collection(USERS);
         friendList.setLayoutManager(new LinearLayoutManager(getContext()));
         UserAdapter adapter = new UserAdapter();
-
         friendList.setAdapter(adapter);
-
-        userReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        usersReference.document(userHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot snapshot) {
-                User cu = new User(snapshot);
-                for (String fh : cu.getFriends()) {
-                    usersReference.document(fh).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                for (String f : new User(snapshot).getFriends().values()) {
+                    usersReference.document(f).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot snapshot) {
                             adapter.addUser(new User(snapshot));
@@ -94,7 +91,7 @@ public class FriendsFragment extends Fragment {
             return users.size();
         }
 
-        public void addUser(User u) {
+        void addUser(User u) {
             if (!users.contains(u)) {
                 users.add(u);
                 notifyItemChanged(users.indexOf(u));

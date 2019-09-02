@@ -18,6 +18,10 @@ class Static {
     static final String SESSION_COUNT = "sessionCount";
     static final String LAST_SESSION = "lastSession";
     static final String DATETIMEFORMAT = "EEE, d MMM yyyy HH:mm";
+    static final String SESSIONS = "sessions";
+    static final String ONLINE_TIMELINE = "onlineTimeline";
+    static final String USERNAME_TIMELINE = "usernameTimeline";
+    static final String OFFLINE_TIMELINE = "offlineTimeline";
 
     static String hash(String in) {
         try {

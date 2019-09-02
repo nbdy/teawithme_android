@@ -30,25 +30,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+
+import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_ONLINE;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class MainActivity extends AppCompatActivity
@@ -94,6 +87,23 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
     }
 
+    public void setupFriendSessionCountListeners(User u) {
+        CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
+        for (String fr : u.getFriends().values()) {
+            cr.document(fr).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e == null) {
+                        if (snapshot != null && snapshot.exists()) {
+                            User f = new User(snapshot);
+
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     private void precheck(FirebaseUser user) {
         firebaseUserHash = Static.hash(user.getEmail());
         CollectionReference cr = FirebaseFirestore.getInstance().collection(USERS);
@@ -101,16 +111,13 @@ public class MainActivity extends AppCompatActivity
         ur.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (!documentSnapshot.exists()) {
-                    Log.i(TAG, documentSnapshot.getId() + " does not exist");
-                    ur.set(new User(getApplicationContext(), user.getDisplayName()));
-                    fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-                } else {
-                    ur.update(LAST_ONLINE, Static.getCurrentTimestamp());
-                    ur.update(ONLINE, true);
-                    Log.i(TAG, documentSnapshot.getId() + " does exist");
-                    fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-                }
+                User u;
+                if (!documentSnapshot.exists())
+                    u = new User(user.getDisplayName(), user.getEmail(), getResources().getString(R.string.never_documented));
+                else u = new User(documentSnapshot);
+                u.setOnline();
+                fragmentManager.beginTransaction().replace(R.id.content, new HomeFragment(firebaseUserHash)).commit();
+                setupFriendSessionCountListeners(u);
             }
         });
         getIntentData();
@@ -181,13 +188,13 @@ public class MainActivity extends AppCompatActivity
         Fragment f = null;
 
         if (id == R.id.nav_home) {
-            f = new HomeFragment();
+            f = new HomeFragment(firebaseUserHash);
         } else if (id == R.id.nav_profile) {
             f = new ProfileFragment();
         } else if (id == R.id.nav_history) {
             f = new HistoryFragment();
         } else if (id == R.id.nav_friends) {
-            f = new FriendsFragment();
+            f = new FriendsFragment(firebaseUserHash);
         } else if (id == R.id.nav_tools) {
             f = new SettingsFragment();
         } else if (id == R.id.nav_share) {
@@ -202,9 +209,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).update(ONLINE, false);
+        FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+
+                new User(snapshot).setOffline();
+            }
+        });
         super.onDestroy();
     }
+
 
     @Override
     protected void onStart() {

@@ -10,20 +10,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
-import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class HomeFragment extends Fragment {
     private String TAG = "{ HOME }";
@@ -34,17 +32,20 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.sessionCountSuffixLabel)
     TextView sessionCountSuffix;
 
-    private DocumentReference sessionDocument;
-    private FirebaseUser user;
+    private DocumentReference user;
+    private String userHash;
+
+    HomeFragment(String userHash) {
+        this.userHash = userHash;
+    }
 
     @OnClick(R.id.teaImageView)
     void teaImageViewTapped() {
         Toast.makeText(getContext(), "you are drinking tea now", Toast.LENGTH_SHORT).show();
-        sessionDocument.update(LAST_SESSION, Static.getCurrentTimestamp());
-        sessionDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        user.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                sessionDocument.update(SESSION_COUNT, String.valueOf(Long.valueOf(documentSnapshot.get(SESSION_COUNT, String.class)) + 1));
+            public void onSuccess(DocumentSnapshot snapshot) {
+                new User(snapshot).setLastSession(Static.getCurrentTimestamp());
             }
         });
         updateUI();
@@ -53,22 +54,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void init() {
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        sessionDocument = FirebaseFirestore.getInstance().collection("users").document(Static.hash(user.getEmail()));
+        user = FirebaseFirestore.getInstance().collection(USERS).document(userHash);
         updateUI();
     }
 
     private void updateUI() {
-        sessionDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        user.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                lastTeaSession.setText(documentSnapshot.get(LAST_SESSION, String.class));
-                String sc = documentSnapshot.get(SESSION_COUNT, String.class);
-                if (sc.equals("1")) sessionCountSuffix.setText(R.string.session);
+            public void onSuccess(DocumentSnapshot snapshot) {
+                User user = new User(snapshot);
+                lastTeaSession.setText(user.getLastSession());
+                Integer sc = user.getSessionCount();
+                if (sc == 1) sessionCountSuffix.setText(R.string.session);
                 else sessionCountSuffix.setText(R.string.sessions);
-                sessionCount.setText(sc);
+                sessionCount.setText(String.valueOf(sc));
             }
         });
+
     }
 
     @Nullable
