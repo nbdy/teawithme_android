@@ -15,7 +15,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,28 +50,30 @@ public class HomeFragment extends Fragment {
                 new User(snapshot).setLastSession(Static.getCurrentTimestamp());
             }
         });
-        updateUI();
         // todo cooldown time
         // todo get time between last session and new session and save to avg session time
     }
 
     private void init() {
         user = FirebaseFirestore.getInstance().collection(USERS).document(userHash);
-        updateUI();
-    }
-
-    private void updateUI() {
-        user.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        user.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot snapshot) {
-                User user = new User(snapshot);
-                lastTeaSession.setText(user.getLastSession());
-                Integer sc = user.getSessionCount();
-                if (sc == 1) sessionCountSuffix.setText(R.string.session);
-                else sessionCountSuffix.setText(R.string.sessions);
-                sessionCount.setText(String.valueOf(sc));
+            public void onEvent(@javax.annotation.Nullable DocumentSnapshot snapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                if (e == null) {
+                    if (snapshot != null && snapshot.exists()) {
+                        updateUI(new User(snapshot));
+                    }
+                }
             }
         });
+    }
+
+    private void updateUI(User user) {
+        lastTeaSession.setText(user.getLastSession());
+        Integer sc = user.getSessionCount();
+        if (sc == 1) sessionCountSuffix.setText(R.string.session);
+        else sessionCountSuffix.setText(R.string.sessions);
+        sessionCount.setText(String.valueOf(sc));
 
     }
 
