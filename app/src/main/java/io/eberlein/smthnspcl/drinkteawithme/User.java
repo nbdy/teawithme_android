@@ -8,6 +8,7 @@ import java.util.List;
 
 import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.EMAIL;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
@@ -38,6 +39,7 @@ public class User extends FireBaseObject {
     User(DocumentSnapshot snapshot) {
         id = snapshot.getId();
         online = snapshot.get(ONLINE, Boolean.class);
+        email = snapshot.get(EMAIL, String.class);
         displayName = snapshot.get(DISPLAY_NAME, String.class);
         lastOnline = snapshot.get(LAST_ONLINE, String.class);
         created = snapshot.get(CREATED, String.class);

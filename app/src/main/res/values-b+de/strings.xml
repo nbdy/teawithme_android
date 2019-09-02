@@ -20,6 +20,9 @@
     <string name="dont_have_an_account">don\'t have an account?</string>
     <string name="im_drinking_tea">i\'m drinking tea</string>
 
+    <string name="tea_time">sitzungsdauer</string>
+    <string name="username">benutzername</string>
+    <string name="set">setzen</string>
     <string name="last_online">last seen</string>
     <string name="add">add</string>
     <string name="last_session">deine letzte sitzung war</string>
@@ -28,4 +31,5 @@
     <string name="sessions">sitzungen</string>
     <string name="session">sitzung</string>
     <string name="never_documented">niemalstag</string>
+    <string name="saved_settings">einstellungen gespeichert</string>
 </resources>
