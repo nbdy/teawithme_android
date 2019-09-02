@@ -11,6 +11,7 @@ import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_ONLINE;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.LAST_SESSION;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSION_COUNT;
 
@@ -33,6 +34,7 @@ public class User {
         lastOnline = snapshot.get(LAST_ONLINE, String.class);
         created = snapshot.get(CREATED, String.class);
         sessionCount = snapshot.get(SESSION_COUNT, String.class);
+        lastSession = snapshot.get(LAST_SESSION, String.class);
         friends = (ArrayList<String>) snapshot.get(FRIENDS);
     }
 
