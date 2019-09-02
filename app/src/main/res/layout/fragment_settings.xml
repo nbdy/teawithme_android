@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/usernameInputLayout"
         android:layout_marginTop="32dp"
+        android:min="5"
         android:max="120"
         android:progress="30" />
 
@@ -37,12 +38,21 @@
         android:text="@string/tea_time" />
 
     <TextView
+        android:id="@+id/teaTimeMinuteLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/teaTimeLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:text="@string/minutes" />
+
+    <TextView
         android:id="@+id/teaTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/usernameInputLayout"
-        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_toStartOf="@id/teaTimeMinuteLabel" />
 
 </RelativeLayout>

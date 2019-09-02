@@ -32,4 +32,5 @@
     <string name="session">sitzung</string>
     <string name="never_documented">niemalstag</string>
     <string name="saved_settings">einstellungen gespeichert</string>
+    <string name="minutes">minuten</string>
 </resources>
