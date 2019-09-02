@@ -15,6 +15,7 @@ import static io.eberlein.smthnspcl.drinkteawithme.Static.OFFLINE_TIMELINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.ONLINE_TIMELINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.SESSIONS;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.TEA_TIME;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERNAME_TIMELINE;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
@@ -25,6 +26,7 @@ public class User extends FireBaseObject {
     private String displayName;
     private String lastOnline;
     private String created;
+    private Integer teaTime;
     private String lastSession;
     private HashMap<String, String> friends;
     private List<String> sessions;
@@ -40,6 +42,7 @@ public class User extends FireBaseObject {
         lastOnline = snapshot.get(LAST_ONLINE, String.class);
         created = snapshot.get(CREATED, String.class);
         lastSession = snapshot.get(LAST_SESSION, String.class);
+        teaTime = snapshot.get(TEA_TIME, Integer.class);
         friends = (HashMap<String, String>) snapshot.get(FRIENDS);
         if (friends == null) friends = new HashMap<>();
         sessions = (List<String>) snapshot.get(SESSIONS);
@@ -61,6 +64,7 @@ public class User extends FireBaseObject {
         created = lastOnline;
         this.lastSession = lastSession;
         friends = new HashMap<>();
+        teaTime = 30;
         sessions = new ArrayList<>();
         onlineTimeline = new ArrayList<>();
         offlineTimeline = new ArrayList<>();
@@ -101,6 +105,15 @@ public class User extends FireBaseObject {
             friends.remove(friend);
             update();
         }
+    }
+
+    public Integer getTeaTime() {
+        return teaTime;
+    }
+
+    public void setTeaTime(Integer teaTime) {
+        this.teaTime = teaTime;
+        update();
     }
 
     public Boolean getOnline() {

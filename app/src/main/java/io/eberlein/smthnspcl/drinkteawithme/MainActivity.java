@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_friends) {
             f = new FriendsFragment(firebaseUserHash);
         } else if (id == R.id.nav_tools) {
-            f = new SettingsFragment();
+            f = new SettingsFragment(firebaseUserHash);
         } else if (id == R.id.nav_share) {
             invite();
         }

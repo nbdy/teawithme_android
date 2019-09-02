@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -26,7 +25,6 @@ import butterknife.OnClick;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.USERS;
 
 public class HomeFragment extends Fragment {
-    private String TAG = "{ HOME }";
     @BindView(R.id.lastTeaSession)
     TextView lastTeaSession;
     @BindView(R.id.sessionCount)
@@ -35,10 +33,9 @@ public class HomeFragment extends Fragment {
     TextView sessionCountSuffix;
 
     private DocumentReference user;
-    private String userHash;
 
     HomeFragment(String userHash) {
-        this.userHash = userHash;
+        user = FirebaseFirestore.getInstance().collection(USERS).document(userHash);
     }
 
     @OnClick(R.id.teaImageView)
@@ -55,7 +52,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void init() {
-        user = FirebaseFirestore.getInstance().collection(USERS).document(userHash);
+
         user.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable DocumentSnapshot snapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {

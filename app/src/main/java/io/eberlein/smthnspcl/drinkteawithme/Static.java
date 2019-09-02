@@ -22,6 +22,7 @@ class Static {
     static final String ONLINE_TIMELINE = "onlineTimeline";
     static final String USERNAME_TIMELINE = "usernameTimeline";
     static final String OFFLINE_TIMELINE = "offlineTimeline";
+    static final String TEA_TIME = "teaTime";
 
     static String hash(String in) {
         try {
