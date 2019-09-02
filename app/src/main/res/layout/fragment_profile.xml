@@ -3,4 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabLayoutInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/info" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabLayoutSessions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sessions" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/tabLayoutStatistics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/statistics" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tabLayout"></FrameLayout>
 </RelativeLayout>

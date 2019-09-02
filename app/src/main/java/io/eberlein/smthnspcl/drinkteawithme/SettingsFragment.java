@@ -1,5 +1,6 @@
 package io.eberlein.smthnspcl.drinkteawithme;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +34,10 @@ public class SettingsFragment extends Fragment {
     TextView teaTime;
 
     private DocumentReference user;
+    private Context context;
 
-    SettingsFragment(String userHash) {
+    SettingsFragment(Context ctx, String userHash) {
+        this.context = ctx;
         user = FirebaseFirestore.getInstance().collection(USERS).document(userHash);
     }
 
@@ -79,6 +82,7 @@ public class SettingsFragment extends Fragment {
                 User u = new User(snapshot);
                 u.setDisplayName(username.getText().toString());
                 u.setTeaTime(Integer.valueOf(teaTime.getText().toString()));
+                Toast.makeText(context, context.getResources().getText(R.string.saved_settings), Toast.LENGTH_SHORT).show();
             }
         });
         super.onStop();

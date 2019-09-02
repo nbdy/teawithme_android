@@ -33,4 +33,6 @@
     <string name="never_documented">niemalstag</string>
     <string name="saved_settings">einstellungen gespeichert</string>
     <string name="minutes">minuten</string>
+    <string name="info">info</string>
+    <string name="statistics">statistiken</string>
 </resources>

@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int RC_SIGN_IN = 420;
-    private static final String TAG = "{ MAIN }";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -190,13 +189,13 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             f = new HomeFragment(firebaseUserHash);
         } else if (id == R.id.nav_profile) {
-            f = new ProfileFragment();
+            f = new ProfileFragment(this);
         } else if (id == R.id.nav_history) {
             f = new HistoryFragment();
         } else if (id == R.id.nav_friends) {
             f = new FriendsFragment(firebaseUserHash);
         } else if (id == R.id.nav_tools) {
-            f = new SettingsFragment(firebaseUserHash);
+            f = new SettingsFragment(this, firebaseUserHash);
         } else if (id == R.id.nav_share) {
             invite();
         }

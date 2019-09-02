@@ -32,4 +32,6 @@
     <string name="never_documented">never documented</string>
     <string name="last_online">zuletzt online</string>
     <string name="minutes">minutes</string>
+    <string name="info">info</string>
+    <string name="statistics">statistics</string>
 </resources>
