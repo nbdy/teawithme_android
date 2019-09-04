@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             f = new HomeFragment(firebaseUserHash);
         } else if (id == R.id.nav_profile) {
-            f = new ProfileFragment(this);
+            f = new ProfileFragment();
         } else if (id == R.id.nav_history) {
             f = new HistoryFragment();
         } else if (id == R.id.nav_friends) {

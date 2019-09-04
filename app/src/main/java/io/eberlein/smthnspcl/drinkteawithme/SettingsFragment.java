@@ -19,6 +19,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -32,6 +34,11 @@ public class SettingsFragment extends Fragment {
     SeekBar teaTimeSeekbar;
     @BindView(R.id.teaTime)
     TextView teaTime;
+
+    @BindView(R.id.teaVolumeSeekbar)
+    SeekBar teaVolumeSeekbar;
+    @BindView(R.id.teaVolume)
+    TextView teaVolume;
 
     private DocumentReference user;
     private Context context;
@@ -69,6 +76,25 @@ public class SettingsFragment extends Fragment {
                 username.setText(u.getDisplayName());
                 teaTime.setText(String.valueOf(u.getTeaTime()));
                 teaTimeSeekbar.setProgress(u.getTeaTime());
+                teaVolume.setText(String.valueOf(u.getCupSize()));
+            }
+        });
+        teaVolumeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                Double x = 1.0 * i / 1000;
+                seekBar.setProgress(i);
+                teaVolume.setText(String.format(Locale.getDefault(), "%.1f", x));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
         return v;
@@ -82,6 +108,7 @@ public class SettingsFragment extends Fragment {
                 User u = new User(snapshot);
                 u.setDisplayName(username.getText().toString());
                 u.setTeaTime(Integer.valueOf(teaTime.getText().toString()));
+                u.addCupSize(Double.valueOf(teaVolume.getText().toString()) / 1000);
                 Toast.makeText(context, context.getResources().getText(R.string.saved_settings), Toast.LENGTH_SHORT).show();
             }
         });

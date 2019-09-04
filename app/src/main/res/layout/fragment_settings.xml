@@ -55,4 +55,41 @@
         android:layout_marginTop="16dp"
         android:layout_toStartOf="@id/teaTimeMinuteLabel" />
 
+    <TextView
+        android:id="@+id/teaVolumeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teaTimeSeekbar"
+        android:layout_alignStart="@id/teaTimeLabel"
+        android:layout_marginTop="16dp"
+        android:text="@string/volume" />
+
+    <TextView
+        android:id="@+id/teaVolume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/teaVolumeLabel"
+        android:layout_marginEnd="4dp"
+        android:layout_toStartOf="@+id/teaVolumeSuffix" />
+
+    <TextView
+        android:id="@+id/teaVolumeSuffix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/teaVolumeLabel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp"
+        android:text="@string/liter" />
+
+    <SeekBar
+        android:id="@+id/teaVolumeSeekbar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/teaTimeSeekbar"
+        android:layout_marginTop="32dp"
+        android:max="3000"
+        android:min="100"
+        android:progress="400" />
+
 </RelativeLayout>

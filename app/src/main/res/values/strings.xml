@@ -34,4 +34,7 @@
     <string name="minutes">minutes</string>
     <string name="info">info</string>
     <string name="statistics">statistics</string>
+    <string name="name">name</string>
+    <string name="volume">volume</string>
+    <string name="liter">liter</string>
 </resources>

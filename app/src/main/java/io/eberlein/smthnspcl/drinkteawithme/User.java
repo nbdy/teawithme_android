@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static io.eberlein.smthnspcl.drinkteawithme.Static.CREATED;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.CUP_SIZE;
+import static io.eberlein.smthnspcl.drinkteawithme.Static.CUP_SIZES;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.DISPLAY_NAME;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.EMAIL;
 import static io.eberlein.smthnspcl.drinkteawithme.Static.FRIENDS;
@@ -28,9 +30,11 @@ public class User extends FireBaseObject {
     private String lastOnline;
     private String created;
     private Integer teaTime;
+    private Double cupSize;
+    private List<Double> cupSizes;
     private String lastSession;
     private HashMap<String, String> friends;
-    private List<String> sessions;
+    private List<Session> sessions;
     private List<String> onlineTimeline;
     private List<String> offlineTimeline;
     private HashMap<String, String> usernameTimeline;
@@ -45,9 +49,12 @@ public class User extends FireBaseObject {
         created = snapshot.get(CREATED, String.class);
         lastSession = snapshot.get(LAST_SESSION, String.class);
         teaTime = snapshot.get(TEA_TIME, Integer.class);
+        cupSize = snapshot.get(CUP_SIZE, Double.class);
+        cupSizes = (List<Double>) snapshot.get(CUP_SIZES);
+        if (cupSizes == null) cupSizes = new ArrayList<>();
         friends = (HashMap<String, String>) snapshot.get(FRIENDS);
         if (friends == null) friends = new HashMap<>();
-        sessions = (List<String>) snapshot.get(SESSIONS);
+        sessions = (List<Session>) snapshot.get(SESSIONS);
         if (sessions == null) sessions = new ArrayList<>();
         onlineTimeline = (List<String>) snapshot.get(ONLINE_TIMELINE);
         if (onlineTimeline == null) onlineTimeline = new ArrayList<>();
@@ -67,6 +74,9 @@ public class User extends FireBaseObject {
         this.lastSession = lastSession;
         friends = new HashMap<>();
         teaTime = 30;
+        cupSize = 0.4;
+        cupSizes = new ArrayList<>();
+        cupSizes.add(cupSize);
         sessions = new ArrayList<>();
         onlineTimeline = new ArrayList<>();
         offlineTimeline = new ArrayList<>();
@@ -79,7 +89,7 @@ public class User extends FireBaseObject {
         FirebaseFirestore.getInstance().collection(USERS).document(id).set(this);
     }
 
-    public List<String> getSessions() {
+    public List<Session> getSessions() {
         return sessions;
     }
 
@@ -107,6 +117,28 @@ public class User extends FireBaseObject {
             friends.remove(friend);
             update();
         }
+    }
+
+    public Double getCupSize() {
+        return cupSize;
+    }
+
+    public void addCupSize(Double size) {
+        if (!cupSizes.contains(size)) {
+            cupSizes.add(size);
+            update();
+        }
+    }
+
+    public void removeCupSize(Double size) {
+        if (cupSizes.contains(size)) {
+            cupSizes.remove(size);
+            update();
+        }
+    }
+
+    public List<Double> getCupSizes() {
+        return cupSizes;
     }
 
     public Integer getTeaTime() {
@@ -154,9 +186,10 @@ public class User extends FireBaseObject {
         return lastSession;
     }
 
-    public void setLastSession(String lastSession) {
-        this.lastSession = lastSession;
-        this.sessions.add(lastSession);
+
+    public void addSessionNow(String teaName, Double liter) {
+        lastSession = Static.getCurrentTimestamp();
+        this.sessions.add(new Session(lastSession, teaName, liter));
         update();
     }
 

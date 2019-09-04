@@ -35,4 +35,7 @@
     <string name="minutes">minuten</string>
     <string name="info">info</string>
     <string name="statistics">statistiken</string>
+    <string name="name">name</string>
+    <string name="volume">menge</string>
+    <string name="liter">liter</string>
 </resources>

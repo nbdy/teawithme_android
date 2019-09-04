@@ -23,6 +23,8 @@ class Static {
     static final String OFFLINE_TIMELINE = "offlineTimeline";
     static final String TEA_TIME = "teaTime";
     static final String EMAIL = "email";
+    static final String CUP_SIZE = "cupSize";
+    static final String CUP_SIZES = "cupSizes";
 
     static String hash(String in) {
         try {

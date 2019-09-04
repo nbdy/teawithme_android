@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
         user.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot snapshot) {
-                new User(snapshot).setLastSession(Static.getCurrentTimestamp());
+                new User(snapshot).addSessionNow("none", 0.4);
             }
         });
         // todo cooldown time
