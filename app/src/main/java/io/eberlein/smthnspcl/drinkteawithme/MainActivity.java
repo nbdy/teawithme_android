@@ -218,12 +218,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setOffline() {
-        FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot snapshot) {
-                new User(snapshot).setOffline();
-            }
-        });
+        if (firebaseUserHash != null) {
+            FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot snapshot) {
+                    new User(snapshot).setOffline();
+                }
+            });
+        }
     }
 
     @Override
@@ -249,7 +251,8 @@ public class MainActivity extends AppCompatActivity
                             .createSignInIntentBuilder()
                             .setTheme(R.style.BlackTheme)
                             .setAvailableProviders(Arrays.asList(
-                                    new AuthUI.IdpConfig.EmailBuilder().build()
+                                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                                    new AuthUI.IdpConfig.GoogleBuilder().build()
                             ))
                             .setTosAndPrivacyPolicyUrls(
                                     "https://teawth.me/tos",
@@ -267,8 +270,8 @@ public class MainActivity extends AppCompatActivity
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) updateUI(FirebaseAuth.getInstance().getCurrentUser());
             else {
-                if (response == null) return;
                 if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    response.getError().printStackTrace();
                     Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                     return;
                 }
