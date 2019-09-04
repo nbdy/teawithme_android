@@ -15,6 +15,10 @@ import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +37,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
 
 import java.util.Arrays;
 
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         if (data != null) {
             String uh = data.getHost();
             if (uh.equals(firebaseUserHash)) {
-                Toast.makeText(this, "i hope you are already your friend", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getResources().getString(R.string.i_hope_you_are_your_own_friend), Toast.LENGTH_LONG).show();
             } else {
                 String c = data.getPathSegments().get(0);
                 if (c.equals("friend_accepted")) {
@@ -167,7 +173,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            new XPopup.Builder(this).asConfirm(getResources().getString(R.string.do_you_really_want_to_leave), getResources().getString(R.string.you_are_about_to_leave_the_app), new OnConfirmListener() {
+                @Override
+                public void onConfirm() {
+                    finish();
+                }
+            });
         }
     }
 
@@ -176,7 +187,7 @@ public class MainActivity extends AppCompatActivity
         i.setAction(Intent.ACTION_SEND);
         i.putExtra(Intent.EXTRA_TEXT, "drink some tea with me: https://teawth.me/invite/" + firebaseUserHash);
         i.setType("text/plain");
-        startActivity(Intent.createChooser(i, "invite someone"));
+        startActivity(Intent.createChooser(i, getResources().getString(R.string.invite_someone)));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -258,10 +269,10 @@ public class MainActivity extends AppCompatActivity
             else {
                 if (response == null) return;
                 if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(getApplicationContext(), "no internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(getApplicationContext(), "known unknowns", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.known_unknowns), Toast.LENGTH_SHORT).show();
             }
         }
     }

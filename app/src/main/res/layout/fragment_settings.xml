@@ -89,7 +89,6 @@
         android:layout_below="@id/teaTimeSeekbar"
         android:layout_marginTop="32dp"
         android:max="3000"
-        android:min="100"
-        android:progress="400" />
+        android:min="100" />
 
 </RelativeLayout>

@@ -125,6 +125,7 @@ public class User extends FireBaseObject {
 
     public void addCupSize(Double size) {
         if (!cupSizes.contains(size)) {
+            cupSize = size;
             cupSizes.add(size);
             update();
         }

@@ -51,8 +51,8 @@ public class HomeFragment extends Fragment {
         // todo get time between last session and new session and save to avg session time
     }
 
-    private void init() {
 
+    private void init() {
         user.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable DocumentSnapshot snapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {

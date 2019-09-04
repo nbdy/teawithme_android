@@ -76,7 +76,7 @@ public class SettingsFragment extends Fragment {
                 username.setText(u.getDisplayName());
                 teaTime.setText(String.valueOf(u.getTeaTime()));
                 teaTimeSeekbar.setProgress(u.getTeaTime());
-                teaVolume.setText(String.valueOf(u.getCupSize()));
+                teaVolume.setText(String.valueOf(u.getCupSize() * 1000));
             }
         });
         teaVolumeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -108,7 +108,7 @@ public class SettingsFragment extends Fragment {
                 User u = new User(snapshot);
                 u.setDisplayName(username.getText().toString());
                 u.setTeaTime(Integer.valueOf(teaTime.getText().toString()));
-                u.addCupSize(Double.valueOf(teaVolume.getText().toString()) / 1000);
+                u.addCupSize(Double.valueOf(teaVolume.getText().toString()));
                 Toast.makeText(context, context.getResources().getText(R.string.saved_settings), Toast.LENGTH_SHORT).show();
             }
         });

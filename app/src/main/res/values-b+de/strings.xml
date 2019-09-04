@@ -38,4 +38,10 @@
     <string name="name">name</string>
     <string name="volume">menge</string>
     <string name="liter">liter</string>
+    <string name="do_you_really_want_to_leave">möchtest du die app wirklich verlassen?</string>
+    <string name="you_are_about_to_leave_the_app">du bist dabei die app zu schließen</string>
+    <string name="i_hope_you_are_your_own_friend">ich hoffe du bist ein freund deinerselbst</string>
+    <string name="invite_someone">lade jemanden ein</string>
+    <string name="no_internet_connection">keine internetverbindung</string>
+    <string name="known_unknowns">known unknowns</string>
 </resources>
