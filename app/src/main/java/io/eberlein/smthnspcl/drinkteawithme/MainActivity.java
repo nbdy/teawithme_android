@@ -206,18 +206,25 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onDestroy() {
+    private void setOffline() {
         FirebaseFirestore.getInstance().collection(USERS).document(firebaseUserHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot snapshot) {
-
                 new User(snapshot).setOffline();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 
+    @Override
+    protected void onPause() {
+        setOffline();
+        super.onPause();
+    }
 
     @Override
     protected void onStart() {
@@ -249,16 +256,12 @@ public class MainActivity extends AppCompatActivity
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) updateUI(FirebaseAuth.getInstance().getCurrentUser());
             else {
-                if (response == null) {
-                    Toast.makeText(getApplicationContext(), "sign in cancelled", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                if (response == null) return;
                 if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Toast.makeText(getApplicationContext(), "no internet connection", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Toast.makeText(getApplicationContext(), "known unknowns", Toast.LENGTH_SHORT).show();
-                Log.e("[BOII]", "Sign-in error: ", response.getError());
             }
         }
     }

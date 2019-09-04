@@ -68,7 +68,7 @@ public class SettingsFragment extends Fragment {
                 User u = new User(snapshot);
                 username.setText(u.getDisplayName());
                 teaTime.setText(String.valueOf(u.getTeaTime()));
-                teaTimeSeekbar.setX(u.getTeaTime());
+                teaTimeSeekbar.setProgress(u.getTeaTime());
             }
         });
         return v;

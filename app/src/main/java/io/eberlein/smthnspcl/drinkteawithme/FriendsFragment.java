@@ -48,11 +48,12 @@ public class FriendsFragment extends Fragment {
         usersReference.document(userHash).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot snapshot) {
-                for (String f : new User(snapshot).getFriends().values()) {
+                for (String f : new User(snapshot).getFriends().keySet()) {
                     usersReference.document(f).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot snapshot) {
-                            adapter.addUser(new User(snapshot));
+                            if (snapshot != null && snapshot.exists())
+                                adapter.addUser(new User(snapshot));
                         }
                     });
                 }
