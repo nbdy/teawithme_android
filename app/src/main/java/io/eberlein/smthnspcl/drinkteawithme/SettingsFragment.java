@@ -76,15 +76,16 @@ public class SettingsFragment extends Fragment {
                 username.setText(u.getDisplayName());
                 teaTime.setText(String.valueOf(u.getTeaTime()));
                 teaTimeSeekbar.setProgress(u.getTeaTime());
-                teaVolume.setText(String.valueOf(u.getCupSize() * 1000));
+                teaVolume.setText(String.valueOf(u.getCupSize()));
+                teaVolumeSeekbar.setProgress(u.getCupSize().intValue() * 1000);
             }
         });
         teaVolumeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 Double x = 1.0 * i / 1000;
-                seekBar.setProgress(i);
-                teaVolume.setText(String.format(Locale.getDefault(), "%.1f", x));
+                seekBar.setProgress(i); // todo fix
+                teaVolume.setText(String.format(Locale.getDefault(), "%.2f", x));
             }
 
             @Override

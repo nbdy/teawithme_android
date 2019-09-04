@@ -43,4 +43,5 @@
     <string name="invite_someone">invite someone</string>
     <string name="no_internet_connection">no internet connection</string>
     <string name="known_unknowns">known unknowns</string>
+    <string name="email">email</string>
 </resources>
